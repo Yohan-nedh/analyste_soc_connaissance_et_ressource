@@ -1,7 +1,7 @@
-# Tryhackme
 # Networking
 
-## Networking Concepts
+## Tryhackme
+### Networking Concepts
 
 <img width="968" height="367" alt="image" src="https://github.com/user-attachments/assets/fe08ba88-8453-41d3-9ad9-2bb641302749" />
 
