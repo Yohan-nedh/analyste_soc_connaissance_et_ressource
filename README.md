@@ -1,1 +1,3 @@
 # analyste_soc_connaissance_et_ressource
+
+Ceci est un roadmap de mon évolution dans la découverte du métier de **SOC** j'essaierai au mieux d'expliquer et de documenter mes ressource en passant par des cours, exercice et ctf. Les sites proposer seront bien évidemment approuver et tester par moi même, mais toutefois je vous conseille d'utiliser **TryHackme payant** pour des raison qui sont plutôt évidente je dirais les roadmap. Il est très important de comprendre que ce site organiser les connaisse de façon à ce que cela soit linéaire. bon commençons dans ce dépot nous allons avoir différentes parties.
