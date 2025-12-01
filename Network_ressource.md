@@ -89,13 +89,19 @@ Elle regroupe les couches 5 (session), 6 (présentation) et 7 (application) du m
 liens: https://waytolearnx.com/2019/06/encapsulation-et-decapsulation-tcp-ip.html
 
 
+## Protocoles
+
+### Telnet 
+
+Le protocole **Telnet** est un protocole de **couche application utilisé** pour se connecter à un terminal virtuel d'un autre ordinateur. Grâce à Telnet, un utilisateur peut se connecter à un autre ordinateur et accéder à son terminal (console) pour exécuter des programmes, lancer des processus par lots et effectuer des tâches d'administration système à distance. Et il utilise le **port 23**
+
+Le protocol en lui même nous permet d'intérargir avec plusieur autre protocole en indiquant le port pour exemple nous avons les proctocoles suivant: **HTTP, FTP, POP3, SMTP et IMAP**
+
+<img width="833" height="336" alt="image" src="https://github.com/user-attachments/assets/be9f082c-ae2d-41be-bac9-34efecd1e75f" />
+
+je vous renvoie vers cette resource pour plus de clarté: https://tryhackme.com/room/protocolsandservers
+ 
+### HTTP
+Le protocole de transfert hypertexte ( HTTP ) est utilisé pour transférer les pages web. Votre navigateur se connecte au serveur web et utilise HTTP pour demander des pages HTML, des images et d'autres fichiers, ainsi que pour soumettre des formulaires et télécharger divers fichiers. Lorsque vous naviguez sur le World Wide Web (WWW), vous utilisez le protocole HTTP. Et les ports utilisés pour **HTTP** sont : **80 et 8080**  et pour **HTTPS** nous avons **443 et 8443**
 
 
-
-
-
-
-
-## Networking Essentials
-
-<img width="968" height="367" alt="image" src="https://github.com/user-attachments/assets/f172d623-f0ad-4110-b8dc-cea2d6e5cc3a" />
