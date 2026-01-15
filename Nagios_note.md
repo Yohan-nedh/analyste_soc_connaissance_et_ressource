@@ -36,5 +36,24 @@ et nous procedons à l'installation des plugins
 ~$ sudo apt install nagios-plugins nagios-plugins-contrib -y
 ```
 
-puis déplaçons nous dans le fichier nrpe.cfg
+puis déplaçons nous dans le fichier nrpe.cfg en tapant cette commande :
 
+```zsh
+~$ sudo nano /etc/nagios/nrpe.cfg
+```
+De là nous insérons l'adresse ip de notre server après ::1, 🩹
+
+<img width="756" height="107" alt="image" src="https://github.com/user-attachments/assets/337d515d-e99c-41c4-854c-70d445914012" />
+
+  Après cela nous nous dirigerons du côté de la machine ou il y a le servur nagios.
+
+  **2. Ajout de la machine à surveiller**
+
+  Pour plus de faciliter nous nommerons la machine à surveiller **nedh-vm**, brel let' go.
+  Tout d'abord allons dans le dossier /objets Les objets désignent tous les éléments impliqués dans la logique de surveillance et de notification. 
+  Nous allons crée le fichier de configuration avec cette commande
+   
+```zsh
+sudo nano /usr/local/nagios/etc/objects/nedh-vm.cfg
+```
+Nous allons commencer par définr le host qui ce bloc **define host { ... }** sert à identifier et déclarer la machine distante (ou locale) dans le serveur nagios.
