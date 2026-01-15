@@ -57,3 +57,5 @@ De là nous insérons l'adresse ip de notre server après ::1, 🩹
 sudo nano /usr/local/nagios/etc/objects/nedh-vm.cfg
 ```
 Nous allons commencer par définr le host qui ce bloc **define host { ... }** sert à identifier et déclarer la machine distante (ou locale) dans le serveur nagios.
+
+(rappel toi nous sommes à l'étape de difine host et tu as déjà configurer et aussi n'oublie pas les capture d'écrant et le mode root est mieux)
