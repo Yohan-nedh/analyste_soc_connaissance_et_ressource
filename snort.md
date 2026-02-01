@@ -158,3 +158,129 @@ ethtool -k wlan0 | grep receive-offload
 Et voilà le résutats
 
 <img width="438" height="201" alt="image" src="https://github.com/user-attachments/assets/0cf29d56-71c8-4465-9294-206d78f2247d" />
+
+
+Si vous éteignez ou redémarrer votre machine cela ramenera le gro à on pour contrer cela on peut éditer un service (moi dans mon cas je ne l'ai pas fait car c'est ma machine physique que j'utilise donc j'ai pas en que le gro soit toujours **on**) voici ce qu'il faut faire:
+
+```zsh
+sudo nano /etc/systemd/system/snort-nic.service
+```
+
+```zsh
+[Unit]
+Description=mode promiscous
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/ip link set dev eth0 promisc on
+ExecStart=/usr/sbin/ethtool -K ens33(à remplacer avec votre interface par wlan0) gro off lro off
+TimeoutStartSec=0
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
+```
+
+## Installation des régles
+
+Nous installerons bien évidemment installer les règles il y a trois types mais nous utiliserons la **Community** bien sur gratuite.
+
+Bon créeons un repertoire ou mettre les règles, utilisons cette commande:
+
+```zsh
+sudo mkdir /usr/local/etc/snort-rules
+```
+je tiens précise que vous êtes dans votre dossier personnel **~** mais que pour le téléchargement je l'ai d'abord fais dans le dossier Téléchargement bah parce que j'y étais mais bon les commandes suivantes seront plus clairs merci
+
+```zsh
+wget https://www.snort.org/downloads/community/snort3-community-rules.tar.gz
+
+sudo tar -xzf snort3-community-rules.tar.gz -C /usr/local/etc/snort-rules/
+
+```
+Et pour voir les règles qu'il y a utilison cette commande
+
+```zsh
+nano /usr/local/etc/snort-rules/snort3-community-rules/snort3-community.rules
+```
+
+et les voicis:
+
+<img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/410162de-4717-4412-913c-fb91eabd1e5d" />
+
+**NB: ON PEUT AUSSI CRÉER CES PROPRES RÈGLES **
+
+**snort.lua** est le fichier de configuration principal de Snort 3 il permet de spécifier le réseau à surveiller et pour cela modifier la variable **HOME_NET = PAR VOTRE RÉSEAU** 
+
+```zsh
+sudo nano /usr/local/etc/snort/snort.lua
+```
+
+<img width="963" height="567" alt="image" src="https://github.com/user-attachments/assets/14dad4c3-a6ff-4bdf-bef5-eac1ee7a43b5" />
+
+Puis allons sur **snort_defaults.lua** pour vérifier sile chemin vers le fichier des règles est correct
+
+```zsh
+sudo nano /usr/local/etc/snort/snort_defaults.lua
+```
+
+Remplacer par le chemin ou vos règles se trouvent 
+
+<img width="1188" height="991" alt="image" src="https://github.com/user-attachments/assets/1516cd7f-8972-43eb-bed4-faa43d599fff" />
+
+dans notre cas voici notre chemin
+
+<img width="1029" height="933" alt="image" src="https://github.com/user-attachments/assets/cde01767-b0bd-482b-abaa-97d84502ae73" />
+
+crée un utilisateur système dédié (appelé snort) pour faire tourner le service Snort de manière sécurisée.
+
+```zsh
+sudo useradd -r -s /usr/sbin/nologin -M -c snort_svc snort
+```
+
+puis on crée ceci
+
+```zsh
+sudo nano /etc/systemd/system/snort_svc.service
+```
+```zsh
+[Unit]
+Description=Snort NIDS/IPS Service
+After=network.target syslog.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/snort -c /etc/snort/snort.lua -i wlan0 -u snort -g snort --daq-dir /usr/local/lib/daq --create-pidfile -D -l /var/log/snort
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=on-failure
+User=snort
+Group=snort
+PIDFile=/var/run/snort/snort.pid   # optionnel, si tu utilises --create-pidfile
+
+[Install]
+WantedBy=multi-user.target
+```
+
+mais vous pouvez personnaliser ensuite :
+```zsh
+sudo systemctl daemon-reload          # systemd relit les nouveaux fichiers
+sudo systemctl enable snort_svc       # démarrage auto au boot
+sudo systemctl start snort_svc        # lance maintenant
+sudo systemctl status snort_svc       # vérifie (regarde les logs avec journalctl -u snort_svc -e si besoin)
+```
+
+Créeons le répertoire pour les logs pour que le compte snort puisse ecrire ça là-bas:
+```zsh
+sudo mkdir /var/log/snort
+
+sudo chmod -R 5775 /var/log/snort
+
+sudo chown -R snort:snort /var/log/snort
+
+```
+
+Démarrage du server 
+```zsh
+sudo systemctl enable --now snort_svc
+```
