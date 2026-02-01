@@ -284,3 +284,29 @@ Démarrage du server
 ```zsh
 sudo systemctl enable --now snort_svc
 ```
+
+Activation du logging
+
+```zsh
+sudo nano /usr/local/etc/snort/snort.lua 
+```
+
+et nous allons à cette section -- 7. configure outputs et nous décommentons
+
+<img width="938" height="933" alt="image" src="https://github.com/user-attachments/assets/d59dcdad-aabe-41fa-abd6-706704c3299e" />
+
+Et on faut ce petit ajout
+
+<img width="938" height="933" alt="image" src="https://github.com/user-attachments/assets/4accacb6-9512-4547-93a6-c0b0c6fad94d" />
+
+Commande de vérifications
+
+```zsh
+snort -c /usr/local/etc/snort/snort.lua 
+```
+
+message de succès
+
+<img width="938" height="71" alt="image" src="https://github.com/user-attachments/assets/7e0e11d8-8479-442d-aa8b-b300230c4886" />
+
+## Test
