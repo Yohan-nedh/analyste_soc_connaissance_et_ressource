@@ -50,3 +50,40 @@ splunkstatus pour vérifier
 splunkstop  pour arrêter
 
 splunkrestart pour redémarrer
+
+
+## Installation du l' Universal Forwarder (sur linux)
+
+On peut se poser la question légitime de savoir ce que c'est que l'universal forwarder?
+
+L'Universal forwarders acheminent les données de votre machine vers un récepteur de données. Ce récepteur est généralement un index de la plateforme Splunk
+où vos données sont stockées. Vous pouvez utiliser l'Universal forwarders pour surveiller vos données en temps réel.
+
+Utilisez l'Universal forwarders pour vous assurer que vos données sont correctement formatées avant de les envoyer à Splunk. Vous pouvez également
+manipuler vos données avant qu'elles n'atteignent les index ou les ajouter manuellement.
+
+
+### En pratique comment l'installer sur une machine linux
+**1-Connectez-vous sur la plateforme de splunk** et si vous n'avez pas encore créer de compte faite le. (Lien menant vers les universal forwarder https://www.splunk.com/en_us/download/universal-forwarder.html)
+**2- Sélectionnez l'Universal forwarder selon votre os** nous ici nous somme sur linux
+
+<img width="1906" height="900" alt="image" src="https://github.com/user-attachments/assets/32301c26-ad63-4b24-9102-1346ead55753" />
+
+Vous avez le choix en fonction des caractéristique de votre système moi je suis 64 bits mais en cas de doute exécuter cette commande **uname -m** comme je suis sur un vm et que je l'untilise en ligne ce commande j'ai choisi l'option **copy wget link** et j'ai copier la commande et exécuter
+
+<img width="1914" height="810" alt="image" src="https://github.com/user-attachments/assets/7585cab3-cc27-4d5b-acff-73d240384648" />
+
+<img width="936" height="228" alt="image" src="https://github.com/user-attachments/assets/316d70fe-d159-4888-9f04-881bb771d165" />
+
+OK après le téléchargement nous allons crée le dossier **splunkforwarder** dans le dossier **/opt/** qui est réservé aux logiciels additionels voici la commande
+
+```zsh
+sudo mkdir -p /opt/splunkforwarder
+```
+
+Si en téléchargeant le fichier de L'universal forwarder(UF pour plus de simplicité) se trouve dans un autre dossier c'est pas grave éxcuter cette commande
+
+```zsh
+sudo tar xvzf splunkforwarder-10.2.0-d749cb17ea65-linux-amd64.tgz -C /opt/splunkforwarder/
+```
+
