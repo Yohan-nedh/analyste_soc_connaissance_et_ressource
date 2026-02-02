@@ -88,3 +88,15 @@ Si en téléchargeant le fichier de L'universal forwarder(UF pour plus de simpli
 sudo tar xvzf splunkforwarder-10.2.0-d749cb17ea65-linux-amd64.tgz -C /opt/splunkforwarder/
 ```
 
+OK, après cette étape vérifions si il y a un utilisateuR. De façon automatique splunk crée un utilisateur nommé **splunkfwd** commande pour vérifier:
+```zsh
+id splunkfwd
+```
+
+dans le cas contraire utilisons ces commande pour crée un utilisateur:
+
+```zsh
+sudo useradd -m -s /bin/false splunkfwd
+sudo groupadd splunkfwd
+sudo chown -R splunkfwd:splunkfwd /opt/splunkforwarder
+```
