@@ -65,6 +65,7 @@ manipuler vos données avant qu'elles n'atteignent les index ou les ajouter manu
 
 ### En pratique comment l'installer sur une machine linux
 **1-Connectez-vous sur la plateforme de splunk** et si vous n'avez pas encore créer de compte faite le. (Lien menant vers les universal forwarder https://www.splunk.com/en_us/download/universal-forwarder.html)
+
 **2- Sélectionnez l'Universal forwarder selon votre os** nous ici nous somme sur linux
 
 <img width="1906" height="900" alt="image" src="https://github.com/user-attachments/assets/32301c26-ad63-4b24-9102-1346ead55753" />
