@@ -118,3 +118,7 @@ sudo /opt/splunkforwarder/bin/splunk enable boot-start -user splunkfwd
 
 ## Configuration d'envoi des données
 
+
+## Autre ressources 
+c'est un lab tryhackme
+https://tryhackme.com/room/splunklab
