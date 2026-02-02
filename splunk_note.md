@@ -100,3 +100,21 @@ sudo useradd -m -s /bin/false splunkfwd
 sudo groupadd splunkfwd
 sudo chown -R splunkfwd:splunkfwd /opt/splunkforwarder
 ```
+
+## Démmarage du Forwarder
+
+Utilisons cette commande qui activera aussi la licence de **UF**:
+
+```zsh
+sudo /opt/splunkforwarder/bin/splunk start --accept-license
+```
+
+puis vous crée le username et le password.
+
+Et pour le démarrer automatiquement au boot :
+```zsh
+sudo /opt/splunkforwarder/bin/splunk enable boot-start -user splunkfwd
+```
+
+## Configuration d'envoi des données
+
