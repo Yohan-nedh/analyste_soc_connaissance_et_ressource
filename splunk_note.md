@@ -118,6 +118,32 @@ sudo /opt/splunkforwarder/bin/splunk enable boot-start -user splunkfwd
 
 ## Configuration d'envoi des données
 
+Nous allons ajouter le server vers lequel les données seront transférer avec cette commande:
+```zsh
+sudo /opt/splunkforwarder/bin/splunk add forward-server TON_INDEXER_IP:9997
+```
+
+Allons du côté de notre interface web splunk d'abord pour configurer le port et créer un index qui nous permettra de voir nos données:
+
+<img width="754" height="558" alt="image" src="https://github.com/user-attachments/assets/a2334d3d-ac30-4f6d-927f-69d1dc9c9ac3" />
+
+<img width="1497" height="530" alt="image" src="https://github.com/user-attachments/assets/e03153ae-c9fb-42a4-8961-1dd5dd11b315" />
+
+<img width="1036" height="294" alt="image" src="https://github.com/user-attachments/assets/17c0988e-e4fd-40f1-a9a7-6f32ecb4a428" />
+
+<img width="792" height="629" alt="image" src="https://github.com/user-attachments/assets/199c55a9-2ccb-4021-89be-60560a4eeea0" />
+
+<img width="1615" height="589" alt="image" src="https://github.com/user-attachments/assets/0e4c0f28-ad56-40f0-90c6-a7c8343dbe20" />
+
+<img width="898" height="702" alt="image" src="https://github.com/user-attachments/assets/4748810e-a956-4a0e-a09d-125470a0e988" />
+
+puis nous indiquons au forwarder de splunk quel fichier il doit surveiller avec cette commande:
+
+```zsh
+/opt/splunkforwarder/bin# ./splunk add monitor /var/log/syslog -index Linux_host
+```
+après **-index** remplacer par le ficheier que vous avez crées
+
 
 ## Autre ressources 
 c'est un lab tryhackme
