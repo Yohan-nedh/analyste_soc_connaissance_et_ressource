@@ -309,4 +309,171 @@ message de succès
 
 <img width="938" height="71" alt="image" src="https://github.com/user-attachments/assets/7e0e11d8-8479-442d-aa8b-b300230c4886" />
 
+
+## confiuguration de mail
+Super, YOHAN ! On passe directement à **l'étape 4** : configurer Snort pour envoyer des alertes en temps réel par e-mail (ou SMS si tu veux pousser plus loin) quand une activité suspecte est détectée.
+
+Tu as raison : le paquet s'appelle **swatchdog** (et non swatch) sur les distributions modernes comme Kali Linux. C'est le même outil, mais il a été renommé "swatchdog" (Simple WATCH DOG) pour éviter les confusions. C'est un script Perl qui surveille les fichiers de logs en temps réel, cherche des patterns (regex), et déclenche des actions comme envoyer un e-mail.
+
+**Pourquoi swatchdog ?**  
+Snort génère des alertes dans un fichier (ex. `/var/log/snort/alert.fast` ou via syslog), mais il n'envoie pas d'email tout seul. Swatchdog "regarde" ce fichier continuellement (comme un tail -f intelligent) et réagit immédiatement quand une ligne match un pattern (ex. : une alerte Snort). C'est léger, simple, et parfait pour un TP sur Kali.
+
+### Étape 4 détaillée : Alertes par e-mail avec swatchdog (grok https://grok.com/share/c2hhcmQtMw_3ff41f0b-8270-409b-9fba-78296299f82e)
+
+#### 1. Installer swatchdog sur Kali
+Kali a le paquet dans ses dépôts (souvent nommé **swatch** mais installe swatchdog en réalité).
+
+```bash
+sudo apt update
+sudo apt install swatch -y   # Ça installe swatchdog + ses dépendances Perl
+```
+
+Vérifie l'installation :
+```bash
+which swatchdog   # Devrait retourner /usr/bin/swatchdog
+swatchdog --version   # Ou --help pour confirmer
+```
+
+Si pas trouvé, installe depuis source (rare sur Kali 202x) :
+```bash
+sudo apt install git perl libfile-tail-perl libtimedate-perl -y
+git clone https://github.com/ToddAtkins/swatchdog.git
+cd swatchdog
+perl Makefile.PL
+make
+sudo make install
+```
+
+#### 2. Configurer Snort pour envoyer les alertes dans un format facile à parser
+Dans `/etc/snort/snort.lua` (ou ton fichier config principal), assure-toi d'avoir une sortie d'alertes claire :
+
+```lua
+alert_fast = { file = true, limit = 0 }   -- Écrit dans /var/log/snort/alert.fast (format simple : timestamp [**] message [**] etc.)
+-- OU pour syslog (plus standard) :
+alert_syslog = { facility = 'local5', level = 'info' }   # Les alertes vont dans /var/log/syslog ou /var/log/messages
+```
+
+- **Pourquoi alert_fast ?** Format lisible et rapide pour swatchdog (pas de JSON compliqué).  
+- Si tu utilises syslog, swatchdog peut surveiller `/var/log/syslog` à la place.
+
+Relance Snort pour appliquer (en mode test d'abord) :
+```bash
+sudo snort -c /etc/snort/snort.lua -T   # Vérifie la config
+```
+
+#### 3. Créer le fichier de configuration de swatchdog
+Le fichier par défaut est `~/.swatchdogrc` (ou `/etc/swatchdogrc` si tu veux global).
+
+Crée-le pour ton utilisateur :
+```bash
+mkdir ~/swatch
+nano ~/.swatchdogrc
+```
+
+Contenu exemple adapté à Snort (très détaillé) :
+
+```perl
+# Surveille le fichier d'alertes Snort
+watchfor /Snort/   # Ou /ALERT/ ou le mot que tu veux (ex: ton SID custom comme 1000001)
+    echo bold yellow   # Affiche en console en jaune (optionnel, pour debug)
+    mail addresses=tonadresse@email.com, subject=ALERTE SNORT - Activité suspecte détectée
+    throttle 00:05:00   # Envoie max 1 email toutes les 5 minutes (évite flood si 100 alertes d'un coup)
+
+# Exemple plus précis pour tes règles custom
+watchfor /sid:1000001/   # Ton scan Nmap
+    mail addresses=tonadresse@email.com, subject=SCAN RESEAU DETECTE (Nmap?)
+
+watchfor /sid:1000003/   # Ta brute force SSH
+    mail addresses=tonadresse@email.com, subject=BRUTE FORCE SSH EN COURS !
+
+# Option : exécuter un script (ex: bloquer IP)
+# watchfor /src_ip:(\d+\.\d+\.\d+\.\d+)/
+#     exec /home/yohan/block_ip.sh $1
+```
+
+- **Explications des lignes** :
+  - `watchfor /pattern/` : Regex Perl pour matcher les lignes du log. Plus le pattern est précis, moins de faux positifs.
+  - `mail addresses=...` : Envoie un email avec le sujet et le corps = la ligne entière du log.
+  - `throttle HH:MM:SS` : Limite le spam d'emails (très important !).
+  - Tu peux ajouter `exec "commande $line"` pour des actions plus avancées.
+
+Pour ton email : remplace `tonadresse@email.com` par ton vrai mail (ex. Gmail, mais attention aux filtres spam).
+
+#### 4. Configurer l'envoi d'email sur Kali (très important !)
+Kali n'a pas de serveur mail par défaut. Utilise **ssmtp** ou **msmtp** (léger) pour envoyer via Gmail ou autre.
+
+Option simple : msmtp (recommandé)
+
+```bash
+sudo apt install msmtp msmtp-mta ca-certificates -y
+```
+
+Crée `/etc/msmtprc` :
+```bash
+sudo nano /etc/msmtprc
+```
+
+Contenu (pour Gmail) :
+```
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+account        gmail
+host           smtp.gmail.com
+port           587
+from           toncomptegmail@gmail.com
+user           toncomptegmail@gmail.com
+password       tonmotdepasse_app   # Utilise un "mot de passe d'application" Google (pas ton mot de passe normal !)
+account default : gmail
+```
+
+Crée un mot de passe d'application Google : https://myaccount.google.com/apppasswords (active "Accès aux applications moins sécurisées" ou utilise App Password).
+
+Teste l'envoi :
+```bash
+echo "Test Snort" | mail -s "Test" tonadresse@email.com
+```
+Ou directement :
+```bash
+echo "Test" | msmtp tonadresse@email.com
+```
+
+Si ça marche → parfait.
+
+#### 5. Lancer swatchdog en mode daemon (surveillance continue)
+```bash
+swatchdog --config-file=~/.swatchdogrc --tail-file=/var/log/snort/alert.fast --daemon
+# OU si tu utilises syslog :
+# swatchdog --config-file=~/.swatchdogrc --tail-file=/var/log/syslog --daemon
+```
+
+- `--daemon` : tourne en arrière-plan.
+- Pour le lancer au boot (optionnel pour TP) : ajoute dans crontab ou systemd service.
+
+Vérifie qu'il tourne :
+```bash
+ps aux | grep swatchdog
+```
+
+#### 6. Tester l'ensemble
+- Génère une alerte Snort (ex. : lance ton Nmap depuis une autre machine : `nmap -sS ton_ip_kali`).
+- Regarde `/var/log/snort/alert.fast` → tu dois voir l'alerte.
+- Dans 5-10 secondes, swatchdog devrait envoyer l'email.
+
+Si pas d'email → vérifie :
+- `tail -f /var/log/syslog` (erreurs msmtp ?)
+- Logs swatchdog (il log parfois dans ~/.swatchdog.log ou console si pas daemon)
+
+#### Bonus : Pour SMS (si tu veux aller plus loin)
+Utilise un script exec dans swatchdog qui appelle une API SMS (ex. Twilio, Free Mobile, etc.). Exemple :
+- Installe `curl`
+- Dans .swatchdogrc :
+  ```
+  watchfor /sid:1000003/
+      exec curl -X POST https://api.twilio.com/... --data-urlencode "Body=ALERTE BRUTE FORCE $line"
+  ```
+Mais pour le TP, l'email suffit amplement.
+
+Dis-moi si l'installation de swatchdog/msmtp passe bien, ou si tu as une erreur précise. Une fois que les emails arrivent, on pourra passer à l'étape 5 (tests d'attaques) ! 😊
 ## Test
