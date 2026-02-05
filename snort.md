@@ -1,5 +1,5 @@
 # Note sur snort
-
+https://chatgpt.com/share/698473cb-a08c-800a-a5c3-fe1cd935edb3
 
 SNORT est un puissant système de détection des  intrusions (IDS)  et un système de prévention des  intrusions (IPS) open  sourcequi fournit une analyse du trafic réseau et un journalisation des paquet de données en temps réel. Il analyse le trafic IP en temps réel, compare les paquets à des règles prédéfinies, et détecte les activités malveillantes comme les scans de ports, les exploits, et les attaques DoS. 
 
